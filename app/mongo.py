@@ -58,6 +58,9 @@ def get_user_by_id(user_id: str) -> User | None:
 
 
 def update_user(user: User) -> User | bool:
+    """
+    Update a user in the database atomically.
+    """
     try:
         current = db['users'].find_one({'_id': ObjectId(user.user_id)})
         if not current:

@@ -12,7 +12,14 @@ def test_read_root():
     assert response.json() == {'message': 'Welcome to the RESTfulAPI!'}
 
 
-def test_get_user(mock_db, test_user_mongo, test_user, test_user_json):
+def test_get_users(mock_db, test_user_mongo, test_user, test_user_json):
+    mock_db.find.return_value = [test_user_mongo()]
+    response = client.get(f"/users")
+    assert response.status_code == 200
+    assert response.json() == [test_user_json]
+
+
+def test_get_user_by_id(mock_db, test_user_mongo, test_user, test_user_json):
     mock_db.find_one.return_value = test_user_mongo()
     response = client.get(f"/users/{test_user_json['user_id']}")
     assert response.status_code == 200

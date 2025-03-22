@@ -8,8 +8,7 @@ router = APIRouter()
 
 @router.get("/users")
 async def get_users() -> list[User]:
-    users = mongo.get_users()
-    return users
+    return mongo.get_users()
 
 
 @router.post("/users")
