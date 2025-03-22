@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from app.mongo import get_users, create_user, get_user_by_id, update_user, delete_user
+from app.mongo import create_record, delete_record, get_users, get_user_by_id, update_user
 from tests.fixtures import test_user_id, test_user, test_user_mongo, mock_db
 
 
@@ -22,20 +22,26 @@ def test_get_users_returns_populated_list(mock_db, test_user, test_user_mongo):
     assert expected == get_users()
 
 
-def test_create_user_returns_user(mock_db, test_user, test_user_mongo):
+def test_create_record_returns_result(mock_db, test_user, test_user_mongo):
     """
     test that create_user returns a user after creation
     """
-    mock_db.insert_one.return_value = test_user_mongo
-    assert test_user == create_user(test_user.name, test_user.email)
+    mock_db.insert_one.return_value = test_user_mongo()
+    assert test_user_mongo() == create_record(
+        'users',
+        {
+            'name': test_user.name,
+            'email': test_user.email,
+        }
+    )
 
 
-def test_get_user_by_id_returns_none(mock_db):
+def test_get_user_by_id_returns_false(mock_db):
     """
     test that get_user_by_id returns None when no user is found
     """
     mock_db.find_one.return_value = None
-    assert None == get_user_by_id(test_user_id)
+    assert False == get_user_by_id(test_user_id)
 
 
 def test_get_user_by_id_returns_user(mock_db, test_user, test_user_mongo):
@@ -74,4 +80,4 @@ def test_delete_user_returns_true(mock_db, test_user, test_user_mongo):
         deleted_count=1,
         acknowledged=True,
     )
-    assert True == delete_user(test_user.user_id)
+    assert True == delete_record('user', test_user.user_id)
