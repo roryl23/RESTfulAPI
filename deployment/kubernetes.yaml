@@ -1,0 +1,81 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: restfulapi
+  labels:
+    app.kubernetes.io/name: restfulapi
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8010
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: restfulapi
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: restfulapi
+  labels:
+    app.kubernetes.io/name: restfulapi
+spec:
+  selector:
+    matchLabels:
+      app: restfulapi
+  template:
+    metadata:
+      labels:
+        app: restfulapi
+    spec:
+      containers:
+      - name: restfulapi
+        image: restfulapi:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        resources: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: restfulapi-mongo
+  labels:
+    app: restfulapi-mongo
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+      protocol: TCP
+  clusterIP: None
+  selector:
+    app: restfulapi-mongo
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: restfulapi-mongo
+spec:
+  serviceName: restfulapi-mongo
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restfulapi-mongo
+  template:
+    metadata:
+      labels:
+        app: restfulapi-mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:6.0
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+      volumes:
+        - name: mongo-data
+          emptyDir: {}

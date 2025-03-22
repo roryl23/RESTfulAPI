@@ -1,0 +1,12 @@
+allow_k8s_contexts('default')
+allow_k8s_contexts('docker-desktop')
+default_registry('ttl.sh/roryl23-905606b1-516a-4346-93bd-88a88703e358')
+docker_build(
+    'restfulapi',
+    '.',
+    ignore=[
+        '.pytest_cache/*',
+        'tests/*'
+    ]
+)
+k8s_yaml('deployment/kubernetes.yaml')
