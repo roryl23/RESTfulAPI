@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, status, Response
 
 from app.models import User, CreateUserRequest
 from app import mongo
@@ -24,3 +24,12 @@ async def get_user_by_id(user_id: str) -> User:
 @router.put("/users/{user_id}")
 async def update_user(user: User) -> User:
     return mongo.update_user(user)
+
+
+@router.delete("/users/{user_id}")
+async def delete_user(user_id: str) -> Response:
+    result = mongo.delete_user(user_id)
+    if result:
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    else:
+        return Response(status_code=status.HTTP_404_NOT_FOUND)

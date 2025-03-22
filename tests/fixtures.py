@@ -17,6 +17,7 @@ def mock_db(monkeypatch):
         find=MagicMock(),
         find_one=MagicMock(),
         find_one_and_update=MagicMock(),
+        delete_one=MagicMock(),
     )
     db_mock.__getitem__ = MagicMock(return_value=db_mock)
 

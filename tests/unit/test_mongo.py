@@ -1,4 +1,6 @@
-from app.mongo import get_users, create_user, get_user_by_id, update_user
+from unittest.mock import MagicMock
+
+from app.mongo import get_users, create_user, get_user_by_id, update_user, delete_user
 from tests.fixtures import test_user_id, test_user, test_user_mongo, mock_db
 
 
@@ -62,3 +64,14 @@ def test_update_user_returns_user(mock_db, test_user, test_user_mongo):
     mock_db.find_one_and_update.return_value = test_user_mongo_updated
 
     assert test_user_updated == update_user(test_user_updated)
+
+
+def test_delete_user_returns_true(mock_db, test_user, test_user_mongo):
+    """
+    test that delete_user returns True after deletion
+    """
+    mock_db.delete_one.return_value = MagicMock(
+        deleted_count=1,
+        acknowledged=True,
+    )
+    assert True == delete_user(test_user.user_id)

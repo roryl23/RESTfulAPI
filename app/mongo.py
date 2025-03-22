@@ -88,3 +88,16 @@ def update_user(user: User) -> User | bool:
     except OperationFailure as e:
         print(f"error: {e}")
         return False
+
+
+def delete_user(user_id: str) -> bool:
+    try:
+        result = db['users'].delete_one({'_id': ObjectId(user_id)})
+        if result.acknowledged:
+            return True
+        else:
+            print(f"failed to delete user: {result}")
+            return False
+    except OperationFailure as e:
+        print(f"error: {e}")
+        return False
