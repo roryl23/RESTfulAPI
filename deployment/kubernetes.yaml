@@ -73,6 +73,11 @@ spec:
           image: mongo:6.0
           ports:
             - containerPort: 27017
+          env:
+            - name: MONGODB_URI
+              value: "mongodb://restfulapi-mongo:27017/"
+            - name: ENVIRONMENT
+              value: "prod"
           volumeMounts:
             - name: mongo-data
               mountPath: /data/db

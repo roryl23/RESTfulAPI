@@ -37,6 +37,7 @@ def test_user_mongo():
             '_id': ObjectId(test_user_id),
             'name': 'test user',
             'email': 'testuser@roryl23.ddns.net',
+            'version': 1,
         }
     )
 

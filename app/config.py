@@ -2,9 +2,9 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    MONGO_URI: str = "mongodb://restfulapi-mongo.default.svc.cluster.local:27017/"
-    MONGO_DB: str = "restfulapi"
     ENVIRONMENT: str = "dev"
+    MONGODB_DB: str = "restfulapi"
+    MONGODB_URI: str
 
     class Config:
         env_file = ".env"
