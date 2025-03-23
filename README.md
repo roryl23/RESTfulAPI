@@ -14,9 +14,8 @@ mostly centered around the usage of MongoDB as the database backend:
   then atomic updates are no longer guaranteed in MongoDB. 
   * I fixed this by adding a retry loop with stochastic delays for
     `update_record()` in `app/mongo.py`. 
-  * You can test this for yourself
-    by running the stress test against my homelab instance, instructions
-    below in the [Extras](#extras) section.
+  * You can test this for yourself by running the stress test against my homelab instance, 
+    instructions below in the [Extras](#extras) section.
 
 ### Usage
 
