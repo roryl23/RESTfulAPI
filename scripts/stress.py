@@ -47,19 +47,17 @@ class Stress:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Stress test RESTfulAPI'
+        description='Stress tests RESTfulAPI production deployment'
     )
     parser.add_argument(
         '--host',
         type=str,
         required=True,
-        help='Host address or hostname to connect to'
     )
     parser.add_argument(
         '--port',
         type=int,
         required=True,
-        help='Port to connect to'
     )
     args = parser.parse_args()
 

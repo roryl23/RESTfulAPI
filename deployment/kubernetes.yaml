@@ -42,6 +42,8 @@ spec:
         env:
           - name: MONGODB_URI
             value: "mongodb://restfulapi-mongo:27017/"
+          - name: JAEGER_ENDPOINT
+            value: "grpc://restfulapi-jaeger-otlp-grpc:4317"
         resources: {}
       volumes:
         - name: prometheus-data
@@ -58,9 +60,9 @@ spec:
     - port: 27017
       targetPort: 27017
       protocol: TCP
-  clusterIP: None
   selector:
     app: restfulapi-mongo
+  type: LoadBalancer
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -171,3 +173,59 @@ spec:
           name: prometheus-config
       - name: prometheus-data
         emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: restfulapi-jaeger
+  labels:
+    app: restfulapi-jaeger
+spec:
+  ports:
+  - name: ui
+    port: 16686
+    targetPort: 16686
+  selector:
+    app: restfulapi-jaeger
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: restfulapi-jaeger-otlp-grpc
+  labels:
+    app: restfulapi-jaeger
+spec:
+  ports:
+    - name: otlp
+      port: 4317
+      targetPort: 4317
+  selector:
+    app: restfulapi-jaeger
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restfulapi-jaeger
+  labels:
+    app: restfulapi-jaeger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restfulapi-jaeger
+  template:
+    metadata:
+      labels:
+        app: restfulapi-jaeger
+    spec:
+      containers:
+      - name: jaeger
+        image: jaegertracing/all-in-one:latest
+        ports:
+        - containerPort: 16686
+        - containerPort: 4317
+        env:
+          - name: COLLECTOR_OTLP_ENABLED
+            value: "true"

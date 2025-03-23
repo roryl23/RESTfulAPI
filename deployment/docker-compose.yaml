@@ -1,12 +1,16 @@
 services:
   mongo:
     image: mongo:6.0
-    ports:
-      - "27017:27017"
     volumes:
       - type: tmpfs
         target: /data/db
-  prometheus-sidecar:
+    network_mode: host
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    network_mode: host
+  prometheus:
     image: prom/prometheus:latest
     volumes:
       - prometheus-data:/prometheus
@@ -21,13 +25,13 @@ services:
     build:
       context: ..
       dockerfile: Dockerfile
-    ports:
-      - "8010:8080"
     environment:
       - MONGODB_URI=mongodb://mongo:27017/
+      - JAEGER_ENDPOINT=grpc://jaeger:4317
     depends_on:
       - mongo
-      - prometheus-sidecar
+      - jaeger
+      - prometheus
     deploy:
       restart_policy:
         condition: on-failure
