@@ -37,7 +37,7 @@ def test_user_mongo():
         return_value={
             '_id': ObjectId(test_user_id),
             'name': 'test user',
-            'email': 'testuser@roryl23.ddns.net',
+            'email': 'testuser@test.net',
             'version': 1,
         }
     )
@@ -51,7 +51,7 @@ def test_user():
     return User(
         user_id=test_user_id,
         name='test user',
-        email='testuser@roryl23.ddns.net',
+        email='testuser@test.net',
     )
 
 
@@ -63,5 +63,5 @@ def test_user_json():
     return {
         'user_id': test_user_id,
         'name': 'test user',
-        'email': 'testuser@roryl23.ddns.net',
+        'email': 'testuser@test.net',
     }

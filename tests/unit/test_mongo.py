@@ -26,11 +26,11 @@ def test_update_record_returns_result(mock_db, test_user, test_user_mongo):
 
     test_user_updated = test_user
     test_user_updated.name = 'updated'
-    test_user_updated.email = 'updated@roryl23.ddns.net'
+    test_user_updated.email = 'updated@test.net'
 
     test_user_mongo_updated = test_user_mongo()
     test_user_mongo_updated['name'] = 'updated'
-    test_user_mongo_updated['email'] = 'updated@roryl23.ddns.net'
+    test_user_mongo_updated['email'] = 'updated@test.net'
     test_user_mongo_updated['version'] = 2
     mock_db.find_one_and_update.return_value = test_user_mongo_updated
 
