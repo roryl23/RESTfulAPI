@@ -76,8 +76,9 @@ if __name__ == '__main__':
         end_time = time.time()
         duration = end_time - start_time
         if not all(results):
-            print(f"failed to update records atomically in {duration} seconds")
+            print(f"failed to update records atomically")
         else:
-            print(f"all records updated atomically in {duration} seconds")
+            print(f"all records updated atomically")
+        print(f"total duration: {duration} seconds")
     else:
         print("failed to create user")
