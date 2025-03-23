@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status, Response
 
-from app.models import User, CreateUserRequest, CreatePostRequest, Post
+from app.models import User, UserRequest, PostRequest, Post
 from app import mongo
 
 router = APIRouter()
@@ -12,7 +12,7 @@ async def get_users() -> list[User]:
 
 
 @router.post("/users")
-async def create_user(request: CreateUserRequest) -> Response:
+async def create_user(request: UserRequest) -> Response:
     result = mongo.create_record(
         'users',
         {
@@ -28,10 +28,7 @@ async def create_user(request: CreateUserRequest) -> Response:
             media_type="application/json",
         )
     else:
-        return Response(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            media_type="application/json",
-        )
+        return Response(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,)
 
 
 @router.get("/users/{user_id}")
@@ -44,24 +41,21 @@ async def get_user_by_id(user_id: str) -> Response:
             media_type="application/json",
         )
     else:
-        return Response(
-            status_code=status.HTTP_404_NOT_FOUND,
-            media_type="application/json",
-        )
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
 
 
 @router.put("/users/{user_id}")
-async def update_user(user: User) -> Response:
+async def update_user(user_id: str, request: UserRequest) -> Response:
     result = mongo.update_record(
         'users',
         {
-            '_id': user.user_id,
-            'name': user.name,
-            'email': user.email,
+            '_id': user_id,
+            'name': request.name,
+            'email': request.email,
         },
     )
     if result:
-        user = mongo.get_user_by_id(user.user_id)
+        user = mongo.get_user_by_id(request.user_id)
         if user:
             return Response(
                 content=user.model_dump_json(),
@@ -69,15 +63,11 @@ async def update_user(user: User) -> Response:
                 media_type="application/json",
             )
         else:
-            return Response(
-                status_code=status.HTTP_404_NOT_FOUND,
-                media_type="application/json",
-            )
+            return Response(status_code=status.HTTP_404_NOT_FOUND)
+    elif result is None:
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
     else:
-        return Response(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            media_type="application/json",
-        )
+        return Response(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @router.delete("/users/{user_id}")
@@ -95,7 +85,7 @@ async def get_posts() -> list[Post]:
 
 
 @router.post("/posts")
-async def create_post(request: CreatePostRequest) -> Response:
+async def create_post(request: PostRequest) -> Response:
     user = mongo.get_user_by_id(request.user_id)
     if user:
         result = mongo.create_record(
@@ -114,15 +104,9 @@ async def create_post(request: CreatePostRequest) -> Response:
                 media_type="application/json",
             )
         else:
-            return Response(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                media_type="application/json",
-            )
+            return Response(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
     else:
-        return Response(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            media_type="application/json",
-        )
+        return Response(status_code=status.HTTP_400_BAD_REQUEST)
 
 
 @router.get("/posts/{post_id}")
@@ -135,25 +119,22 @@ async def get_post_by_id(post_id: str) -> Response:
             media_type="application/json",
         )
     else:
-        return Response(
-            status_code=status.HTTP_404_NOT_FOUND,
-            media_type="application/json",
-        )
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
 
 
 @router.put("/posts/{post_id}")
-async def update_post(post: Post) -> Response:
+async def update_post(post_id: str, request: PostRequest) -> Response:
     result = mongo.update_record(
         'posts',
         {
-            '_id': post.post_id,
-            'title': post.title,
-            'content': post.content,
-            'user_id': post.user_id,
+            '_id': post_id,
+            'title': request.title,
+            'content': request.content,
+            'user_id': request.user_id,
         },
     )
     if result:
-        post = mongo.get_post_by_id(post.post_id)
+        post = mongo.get_post_by_id(request.post_id)
         if post:
             return Response(
                 content=post.model_dump_json(),
@@ -161,15 +142,9 @@ async def update_post(post: Post) -> Response:
                 media_type="application/json",
             )
         else:
-            return Response(
-                status_code=status.HTTP_404_NOT_FOUND,
-                media_type="application/json",
-            )
+            return Response(status_code=status.HTTP_404_NOT_FOUND)
     else:
-        return Response(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            media_type="application/json",
-        )
+        return Response(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @router.delete("/posts/{post_id}")

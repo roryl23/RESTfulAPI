@@ -6,7 +6,6 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description='Stress test RESTfulAPI'
     )
-
     parser.add_argument(
         '--host',
         type=str,
@@ -19,10 +18,7 @@ def parse_args():
         default=8080,
         help='Port to connect to'
     )
-
-    # Parse arguments and return
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
 class Stress:
@@ -34,18 +30,21 @@ class Stress:
             'name': 'test',
             'email': 'testuser@test.net',
         })
-        print(r.json())
-        return r.json()['user_id']
+        if r.status_code == 201:
+            print(r.json())
+            return r.json()['user_id']
+        else:
+            print(f"failed to create user: {r.status_code}")
+            return None
 
-    def update_records(self, user_id: str):
-        for i in range(10000):
+    def update_records(self, user_id: str, num: int=100):
+        for i in range(num):
             r = requests.put(f"{self.url}/users/{i}", json={
-                'user_id': user_id,
                 'name': f"test{i}",
                 'email': f"testuser{i}@test.net",
             })
             if r.status_code != 200:
-                print(r.json())
+                print(f"failed to update record: {r.status_code}")
 
 
 if __name__ == '__main__':
@@ -53,4 +52,7 @@ if __name__ == '__main__':
 
     stresser = Stress(args.host, args.port)
     user_id = stresser.create_user()
-    stresser.update_records(user_id)
+    if user_id is not None:
+        stresser.update_records(user_id)
+    else:
+        print("failed to create user")

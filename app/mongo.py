@@ -1,5 +1,6 @@
 from typing import Mapping
 from bson import ObjectId
+from bson.errors import InvalidId
 from pymongo import MongoClient
 from pymongo.errors import OperationFailure
 from pymongo.results import InsertOneResult
@@ -25,7 +26,7 @@ def create_record(collection: str, record: dict) -> InsertOneResult | bool:
         return False
 
 
-def update_record(collection: str, record: dict) -> Mapping | bool:
+def update_record(collection: str, record: dict) -> Mapping | None | bool:
     """
     Update a record in the database atomically.
     """
@@ -47,6 +48,9 @@ def update_record(collection: str, record: dict) -> Mapping | bool:
         else:
             print(f"update failed due to version mismatch: {result}")
             return False
+    except InvalidId as e:
+        print(f"error: {e}")
+        return None
     except OperationFailure as e:
         print(f"error: {e}")
         return False

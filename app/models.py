@@ -7,7 +7,7 @@ class User(BaseModel):
     email: str
 
 
-class CreateUserRequest(BaseModel):
+class UserRequest(BaseModel):
     name: str
     email: str
 
@@ -19,7 +19,7 @@ class Post(BaseModel):
     user_id: str
 
 
-class CreatePostRequest(BaseModel):
+class PostRequest(BaseModel):
     title: str
     content: str
     user_id: str
