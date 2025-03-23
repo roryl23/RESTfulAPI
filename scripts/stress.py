@@ -32,7 +32,7 @@ class Stress:
         else:
             return False
 
-    def update_records(self, user_id: str, n: int=10000, w: int=64):
+    def update_records(self, user_id: str, n: int=10000, w: int=128):
         with ThreadPoolExecutor(max_workers=w) as executor:
             threads = [executor.submit(self.update_record, user_id, i) for i in range(1, n)]
             results = []

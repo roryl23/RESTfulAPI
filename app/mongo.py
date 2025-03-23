@@ -50,8 +50,8 @@ def update_record(collection: str, record: dict) -> Mapping | None | bool:
             if result:
                 return result
             else:
-                # stochastic delay from 0 to 10 ms
-                time.sleep(random.uniform(0, 0.01))
+                # stochastic delay from 0 to 5 ms
+                time.sleep(random.uniform(0, 0.005))
         except InvalidId as e:
             print(f"error: {e}")
             return None
