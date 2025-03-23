@@ -67,4 +67,4 @@ below.
   ![PyCharm](./docs/stress.png)
   * From the shell, run `python scripts/stress.py --host roryl23.ddns.net --port 80`
   * Note that the stress test is really only meaningful when run against
-    a deployment with multiple instances, with load balancing.
+    a deployment with multiple instances with load balancing.
