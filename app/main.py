@@ -14,10 +14,8 @@ app = FastAPI(
     version="0.1.0"
 )
 
-# tracing
-resource = Resource(attributes={"service.name": "restfulapi"})
-
 # metrics
+resource = Resource(attributes={"service.name": "restfulapi"})
 metric_reader = PrometheusMetricReader()
 metrics_provider = MeterProvider(resource=resource, metric_readers=[metric_reader])
 metrics.set_meter_provider(metrics_provider)
