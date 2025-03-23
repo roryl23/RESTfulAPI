@@ -4,11 +4,6 @@ An API implementation with FastAPI.
 
 ### Notes
 
-It took me about 8 hours to complete the requirements,
-and another 12 doing the bonus and extras.
-
-#### Challenges
-
 I ran into a couple challenges while creating this application,
 mostly centered around the usage of MongoDB as the database backend:
 
