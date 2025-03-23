@@ -1,3 +1,5 @@
+import random
+import time
 from typing import Mapping
 from bson import ObjectId
 from bson.errors import InvalidId
@@ -28,32 +30,34 @@ def create_record(collection: str, record: dict) -> InsertOneResult | bool:
 
 def update_record(collection: str, record: dict) -> Mapping | None | bool:
     """
-    Update a record in the database atomically.
+    Update a record in the database atomically,
+    with stochastic retry delays.
     """
-    try:
-        _id = ObjectId(record['_id'])
-        current = db[collection].find_one({'_id': _id})
-        if not current:
-            return False
+    while True:
+        try:
+            _id = ObjectId(record['_id'])
+            current = db[collection].find_one({'_id': _id})
+            if not current:
+                return None
 
-        updates = {k: v for k, v in record.items() if k != '_id'}
-        updates['version'] = current['version'] + 1
-        result = db[collection].find_one_and_update(
-            {'_id': _id, 'version': current['version']},
-            {'$set': updates},
-            return_document=True
-        )
-        if result:
-            return result
-        else:
-            print(f"update failed due to version mismatch: {result}")
+            updates = {k: v for k, v in record.items() if k != '_id'}
+            updates['version'] = current['version'] + 1
+            result = db[collection].find_one_and_update(
+                {'_id': _id, 'version': current['version']},
+                {'$set': updates},
+                return_document=True
+            )
+            if result:
+                return result
+            else:
+                # stochastic delay from 0 to 10 ms
+                time.sleep(random.uniform(0, 0.01))
+        except InvalidId as e:
+            print(f"error: {e}")
+            return None
+        except OperationFailure as e:
+            print(f"error: {e}")
             return False
-    except InvalidId as e:
-        print(f"error: {e}")
-        return None
-    except OperationFailure as e:
-        print(f"error: {e}")
-        return False
 
 
 def delete_record(collection:str, _id: str) -> bool:

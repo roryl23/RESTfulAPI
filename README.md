@@ -2,6 +2,23 @@
 
 An API implementation with FastAPI.
 
+### Notes
+
+I ran into a couple challenges while creating this application,
+mostly centered around the usage of MongoDB as the database backend.
+
+First of all, I needed to mock a testing harness to allow unit
+tests of the MongoDB functions, which turned out to be a bit more work than anticipated.
+
+Second, if the application has multiple instances such as the
+Kubernetes DaemonSet you can see in `deployment/kubernetes.yaml`,
+along with round-robin load balancing with HAProxy, then
+atomic updates are no longer guaranteed in MongoDB.
+I fixed this by adding a retry loop with stochastic delays for
+`update_record()` in `app/mongo.py`. You can test this for yourself
+by running the stress test against my running instance, instructions
+below.
+
 ### Usage
 
 * Install dependencies:
@@ -48,5 +65,6 @@ An API implementation with FastAPI.
 * To make the Prometheus metrics more interesting, run the stress test:
       
   ![PyCharm](./docs/stress.png)
-  * From the shell, run `python scripts/stress.py --host roryl23.ddns.net`
-  
+  * From the shell, run `python scripts/stress.py --host roryl23.ddns.net --port 80`
+  * Note that the stress test is really only meaningful when run against
+    a deployment with multiple instances, with load balancing.
