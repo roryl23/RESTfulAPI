@@ -52,13 +52,13 @@ if __name__ == '__main__':
     parser.add_argument(
         '--host',
         type=str,
-        default='localhost',
+        required=True,
         help='Host address or hostname to connect to'
     )
     parser.add_argument(
         '--port',
         type=int,
-        default=8080,
+        equired=True,
         help='Port to connect to'
     )
     args = parser.parse_args()
