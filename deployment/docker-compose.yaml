@@ -1,6 +1,22 @@
-version: "3.9"
-
 services:
+  mongo:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - type: tmpfs
+        target: /data/db
+  prometheus-sidecar:
+    image: prom/prometheus:latest
+    volumes:
+      - prometheus-data:/prometheus
+      - ../config/prometheus.yaml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
+    network_mode: host
+
   restfulapi:
     build:
       context: ..
@@ -11,18 +27,11 @@ services:
       - MONGODB_URI=mongodb://mongo:27017/
     depends_on:
       - mongo
+      - prometheus-sidecar
     deploy:
       restart_policy:
         condition: on-failure
+    network_mode: host
 
-  mongo:
-    image: mongo:6.0
-    ports:
-      - "27017:27017"
-    volumes:
-      - type: tmpfs
-        target: /data/db
-
-networks:
-  app-network:
-    driver: bridge
+volumes:
+  prometheus-data:

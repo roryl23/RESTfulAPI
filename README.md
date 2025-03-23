@@ -1,15 +1,18 @@
 # RESTfulAPI
 
-A RESTful API implementation with FastAPI.
+An API implementation with FastAPI.
 
 ### Usage
 
 * Install dependencies:
-  * Docker, [Docker Desktop](https://www.docker.com/products/docker-desktop/) is the easiest option
+  * Everything is smoothest with:
+    * [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+    * [PyCharm](https://www.jetbrains.com/pycharm/)
+  * However, this will also work with Docker Engine on Linux
+    and running shell commands/scripts
   * [Docker Compose](https://docs.docker.com/compose/install/)
 * Development
   * Clone the repo: `git clone git@github.com:roryl23/RESTfulAPI.git`
-  * Install [PyCharm](https://www.jetbrains.com/pycharm/)
   * Set up a virtualenv however you like and activate it in PyCharm or otherwise
     * [pyenv](https://github.com/pyenv/pyenv?tab=readme-ov-file#installation): 
       `pyenv install 3.11.9 && pyenv virtualenv 3.11.9 restfulapi && pyenv activate restfulapi && pip install -r requirements.txt`
@@ -24,20 +27,23 @@ A RESTful API implementation with FastAPI.
 
       ![restfulapi](./docs/restfulapi.png)
     * Application is up:
-      * [API Documentation](http://127.0.0.1:8080/docs#/)
-      * [Performance metrics](http://127.0.0.1:8080/metrics/)
+      * [API Documentation](http://localhost:8080/docs#/)
+      * [Prometheus](http://localhost:9090/)
 * Production
   * Install Kubernetes
     * In Docker Desktop, just go to settings and enable the Kubernetes cluster
   * Install [Tilt](https://docs.tilt.dev/)
-  * From the shell, run `tilt up` 
+  * From the shell, run `tilt up`
   * Application is up:
-    * [API Documentation](http://127.0.0.1:8010/docs#/)
-    * [Performance metrics](http://127.0.0.1:8010/metrics/)
+    * [API Documentation](http://localhost:8010/docs#/)
+    * [Prometheus](http://localhost:9090/)
 
 ### Extras
 
-* To make the performance metrics more interesting, run the stress test:
+* Publicly available at:
+  * [API Documentation](http://roryl23.ddns.net/docs)
+  * [Prometheus](http://roryl23.ddns.net:9090)
+* To make the Prometheus metrics more interesting, run the stress test:
       
   ![stress](./docs/stress.png)
   * From the shell: `python scripts/stress.py`

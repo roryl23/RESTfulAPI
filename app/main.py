@@ -20,13 +20,7 @@ app = FastAPI(
 )
 
 # tracing
-resource = Resource(attributes={"service.name": "fastapi-app"})
-trace_provider = TracerProvider(resource=resource)
-trace.set_tracer_provider(trace_provider)
-otlp_exporter = OTLPSpanExporter(endpoint="localhost:4317", insecure=True)
-span_processor = BatchSpanProcessor(otlp_exporter)
-trace_provider.add_span_processor(span_processor)
-FastAPIInstrumentor.instrument_app(app)
+resource = Resource(attributes={"service.name": "restfulapi"})
 
 # metrics
 metric_reader = PrometheusMetricReader()
@@ -44,17 +38,6 @@ request_duration = meter.create_histogram(
     description="Duration of HTTP requests in seconds",
     unit="s"
 )
-
-@app.middleware("http")
-async def add_metrics(request: Request, call_next):
-    tracer = trace.get_tracer(__name__)
-    with tracer.start_as_current_span("http-request") as span:
-        start_time = time.time()
-        request_counter.add(1, {"method": request.method, "endpoint": request.url.path})
-        response = await call_next(request)
-        duration = time.time() - start_time
-        request_duration.record(duration, {"method": request.method, "endpoint": request.url.path})
-        return response
 
 app.include_router(router)
 
@@ -74,6 +57,19 @@ async def get_metrics():
         media_type=CONTENT_TYPE_LATEST
     )
 
+
+@app.middleware("httpmetrics")
+async def add_metrics(request: Request, call_next):
+    tracer = trace.get_tracer(__name__)
+    with tracer.start_as_current_span("http-request") as span:
+        start_time = time.time()
+        request_counter.add(1, {"method": request.method, "endpoint": request.url.path})
+        response = await call_next(request)
+        duration = time.time() - start_time
+        request_duration.record(duration, {"method": request.method, "endpoint": request.url.path})
+        return response
+
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8080)
+    uvicorn.run(app, host="0.0.0.0", port=8080)
