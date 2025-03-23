@@ -6,25 +6,6 @@ from concurrent import futures
 from concurrent.futures import ThreadPoolExecutor
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(
-        description='Stress test RESTfulAPI'
-    )
-    parser.add_argument(
-        '--host',
-        type=str,
-        default='localhost',
-        help='Host address or hostname to connect to'
-    )
-    parser.add_argument(
-        '--port',
-        type=int,
-        default=8080,
-        help='Port to connect to'
-    )
-    return parser.parse_args()
-
-
 class Stress:
     def __init__(self, url, port):
         self.url: str = f"http://{url}:{port}"
@@ -65,7 +46,22 @@ class Stress:
 
 
 if __name__ == '__main__':
-    args = parse_args()
+    parser = argparse.ArgumentParser(
+        description='Stress test RESTfulAPI'
+    )
+    parser.add_argument(
+        '--host',
+        type=str,
+        default='localhost',
+        help='Host address or hostname to connect to'
+    )
+    parser.add_argument(
+        '--port',
+        type=int,
+        default=8080,
+        help='Port to connect to'
+    )
+    args = parser.parse_args()
 
     stresser = Stress(args.host, args.port)
     user_id = stresser.create_user()
