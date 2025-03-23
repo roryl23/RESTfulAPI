@@ -24,10 +24,17 @@ A RESTful API implementation with FastAPI.
 
     ![restfulapi](./docs/restfulapi.png)
 
-    * Application is up: http://127.0.0.1:8080/docs#/
+    * Application is up:
+      * [API Documentation](http://127.0.0.1:8080/docs#/)
+      * [Performance metrics](http://127.0.0.1:8080/performance/)
+        * To make the metrics more interesting, run `python scripts/stress.py`
 * Production
   * Install Kubernetes
     * In Docker Desktop, just go to settings and enable the Kubernetes cluster
   * Install [Tilt](https://docs.tilt.dev/)
   * From the shell, run `tilt up` 
-  * Application is up: http://127.0.0.1:8010/docs#/
+  * Application is up:
+    * [API Documentation](http://127.0.0.1:8010/docs#/)
+    * [Performance metrics](http://127.0.0.1:8010/performance/)
+      * To make the metrics more interesting, run `python scripts/stress.py`
+  
