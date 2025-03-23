@@ -39,7 +39,7 @@ class Stress:
 
     def update_records(self, user_id: str, num: int=100):
         for i in range(num):
-            r = requests.put(f"{self.url}/users/{i}", json={
+            r = requests.put(f"{self.url}/users/{user_id}", json={
                 'name': f"test{i}",
                 'email': f"testuser{i}@test.net",
             })

@@ -55,7 +55,7 @@ async def update_user(user_id: str, request: UserRequest) -> Response:
         },
     )
     if result:
-        user = mongo.get_user_by_id(request.user_id)
+        user = mongo.get_user_by_id(user_id)
         if user:
             return Response(
                 content=user.model_dump_json(),
@@ -134,7 +134,7 @@ async def update_post(post_id: str, request: PostRequest) -> Response:
         },
     )
     if result:
-        post = mongo.get_post_by_id(request.post_id)
+        post = mongo.get_post_by_id(post_id)
         if post:
             return Response(
                 content=post.model_dump_json(),
