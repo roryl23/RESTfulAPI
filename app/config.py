@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     ENVIRONMENT: str = "dev"
     MONGODB_DB: str = "restfulapi"
-    MONGODB_URI: str
+    MONGODB_URI: str = "mongodb://localhost:27017/"
 
     class Config:
         env_file = ".env"

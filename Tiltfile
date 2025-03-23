@@ -5,6 +5,7 @@ docker_build(
     'restfulapi',
     '.',
     ignore=[
+        'docs/*',
         '.pytest_cache/*',
         'tests/*'
     ]
