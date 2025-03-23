@@ -22,9 +22,9 @@ def create_record(collection: str, record: dict) -> InsertOneResult | bool:
             return result
         else:
             print(f"failed to create user: {result}")
-            return result
+            return False
     except OperationFailure as e:
-        print(f"error: {e}")
+        print(f"OperationFailure: {e}")
         return False
 
 
@@ -53,17 +53,17 @@ def update_record(collection: str, record: dict) -> Mapping | None | bool:
                 # stochastic delay from 0 to 5 ms
                 time.sleep(random.uniform(0, 0.005))
         except InvalidId as e:
-            print(f"error: {e}")
+            print(f"InvalidID: {e}")
             return None
         except OperationFailure as e:
-            print(f"error: {e}")
+            print(f"OperationFailure: {e}")
             return False
 
 
 def delete_record(collection:str, _id: str) -> bool:
     try:
         result = db[collection].delete_one({'_id': ObjectId(_id)})
-        if result.acknowledged:
+        if result.deleted_count == 1:
             return True
         else:
             print(f"failed to delete record: {result}")
@@ -109,7 +109,7 @@ def get_posts() -> list[Post]:
                 post_id=str(record['_id']),
                 title=record['title'],
                 content=record['content'],
-                user_id=record['user_id'],
+                user_id=str(record['user_id']),
             ))
         return posts
     else:
@@ -123,7 +123,7 @@ def get_post_by_id(post_id: str) -> Post | bool:
             post_id=str(result['_id']),
             title=result['title'],
             content=result['content'],
-            user_id=result['user_id'],
+            user_id=str(result['user_id']),
         )
     else:
         return False

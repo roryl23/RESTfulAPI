@@ -16,8 +16,8 @@ along with round-robin load balancing with HAProxy, then
 atomic updates are no longer guaranteed in MongoDB.
 I fixed this by adding a retry loop with stochastic delays for
 `update_record()` in `app/mongo.py`. You can test this for yourself
-by running the stress test against my running instance, instructions
-below.
+by running the stress test against my homelab instance, instructions
+below in the [Extras](#extras) section.
 
 ### Usage
 

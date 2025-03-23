@@ -2,10 +2,10 @@ from bson.objectid import ObjectId
 from unittest.mock import MagicMock
 import pytest
 
-from app.models import User
-
+from app.models import User, Post
 
 test_user_id = '67df0469e192859207eb753a'
+test_post_id = '67df0469e192859207eb753b'
 
 
 @pytest.fixture
@@ -64,4 +64,71 @@ def test_user_json():
         'user_id': test_user_id,
         'name': 'test user',
         'email': 'testuser@test.net',
+    }
+
+
+@pytest.fixture
+def test_user_request_json():
+    """
+    Fixture to return a test user request as a JSON object.
+    """
+    return {
+        'name': 'test user',
+        'email': 'testuser@test.net',
+    }
+
+
+@pytest.fixture
+def test_post_mongo():
+    """
+    Fixture to return a test post as a dict,
+    simulating a MongoDB document.
+    """
+    return MagicMock(
+        inserted_id=ObjectId(test_post_id),
+        return_value={
+            '_id': ObjectId(test_post_id),
+            'title': 'test title',
+            'content': 'test content',
+            'user_id': ObjectId(test_user_id),
+            'version': 1,
+        }
+    )
+
+
+@pytest.fixture
+def test_post():
+    """
+    Fixture to return a test post as a Post model instance.
+    """
+    return Post(
+        post_id=test_post_id,
+        title='test title',
+        content='test content',
+        user_id=test_user_id,
+    )
+
+
+@pytest.fixture
+def test_post_json():
+    """
+    Fixture to return a test post as a JSON object.
+    """
+    return {
+        'post_id': test_post_id,
+        'title': 'test title',
+        'content': 'test content',
+        'user_id': test_user_id,
+    }
+
+
+@pytest.fixture
+def test_post_request_json():
+    """
+    Fixture to return a test post request as a JSON object.
+    """
+    return {
+        'title': 'test title',
+        'content': 'test content',
+        'user_id': test_user_id,
     }

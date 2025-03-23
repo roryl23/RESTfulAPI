@@ -22,13 +22,15 @@ async def create_user(request: UserRequest) -> Response:
     )
     if result:
         user = mongo.get_user_by_id(str(result.inserted_id))
-        return Response(
-            content=user.model_dump_json(),
-            status_code=status.HTTP_201_CREATED,
-            media_type="application/json",
-        )
+        if user:
+            return Response(
+                content=user.model_dump_json(),
+                status_code=status.HTTP_201_CREATED,
+                media_type="application/json",
+            )
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
     else:
-        return Response(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,)
+        return Response(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @router.get("/users/{user_id}")
@@ -104,7 +106,7 @@ async def create_post(request: PostRequest) -> Response:
                 media_type="application/json",
             )
         else:
-            return Response(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(status_code=status.HTTP_404_NOT_FOUND)
     else:
         return Response(status_code=status.HTTP_400_BAD_REQUEST)
 
