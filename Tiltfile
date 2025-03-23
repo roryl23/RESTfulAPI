@@ -7,7 +7,8 @@ docker_build(
     ignore=[
         'docs/*',
         '.pytest_cache/*',
-        'tests/*'
+        'tests/*',
+        'scripts/*'
     ]
 )
 k8s_yaml('deployment/kubernetes.yaml')

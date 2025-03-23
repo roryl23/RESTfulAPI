@@ -39,6 +39,9 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
+        env:
+          - name: MONGODB_URI
+            value: "mongodb://restfulapi-mongo:27017/"
         resources: {}
       volumes:
         - name: prometheus-data
