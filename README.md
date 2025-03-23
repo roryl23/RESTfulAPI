@@ -16,18 +16,16 @@ A RESTful API implementation with FastAPI.
   * Run the tests
     * In PyCharm, select the pytest run configuration:
 
-    ![pytest](./docs/pytest.png)
+      ![pytest](./docs/pytest.png)
 
     * From the shell, run `pytest`
   * Run the application
     * In PyCharm, select the restfulapi run configuration: 
 
-    ![restfulapi](./docs/restfulapi.png)
-
+      ![restfulapi](./docs/restfulapi.png)
     * Application is up:
       * [API Documentation](http://127.0.0.1:8080/docs#/)
-      * [Performance metrics](http://127.0.0.1:8080/performance/)
-        * To make the metrics more interesting, run `python scripts/stress.py`
+      * [Performance metrics](http://127.0.0.1:8080/metrics/)
 * Production
   * Install Kubernetes
     * In Docker Desktop, just go to settings and enable the Kubernetes cluster
@@ -35,6 +33,12 @@ A RESTful API implementation with FastAPI.
   * From the shell, run `tilt up` 
   * Application is up:
     * [API Documentation](http://127.0.0.1:8010/docs#/)
-    * [Performance metrics](http://127.0.0.1:8010/performance/)
-      * To make the metrics more interesting, run `python scripts/stress.py`
+    * [Performance metrics](http://127.0.0.1:8010/metrics/)
+
+### Extras
+
+* To make the performance metrics more interesting, run the stress test:
+      
+  ![stress](./docs/stress.png)
+  * From the shell: `python scripts/stress.py`
   
