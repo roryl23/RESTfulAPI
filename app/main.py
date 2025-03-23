@@ -29,9 +29,9 @@ request_counter = meter.create_counter(
     unit="1"
 )
 request_duration = meter.create_histogram(
-    name="http_request_duration_seconds",
-    description="Duration of HTTP requests in seconds",
-    unit="s"
+    name="http_request_duration",
+    description="Duration of HTTP requests in ms",
+    unit="ms"
 )
 
 app.include_router(router)
@@ -57,10 +57,10 @@ async def get_metrics():
 async def add_metrics(request: Request, call_next):
     tracer = trace.get_tracer(__name__)
     with tracer.start_as_current_span("http-request") as span:
-        start_time = time.time()
+        start_time = time.time_ns() / 1000000
         request_counter.add(1, {"method": request.method, "endpoint": request.url.path})
         response = await call_next(request)
-        duration = time.time() - start_time
+        duration = (time.time_ns() / 1000000) - start_time
         request_duration.record(duration, {"method": request.method, "endpoint": request.url.path})
         return response
 

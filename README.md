@@ -5,27 +5,29 @@ An API implementation with FastAPI.
 ### Usage
 
 * Install dependencies:
-  * Everything is smoothest with:
-    * [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-    * [PyCharm](https://www.jetbrains.com/pycharm/)
-  * However, this will also work with Docker Engine on Linux
-    and running shell commands/scripts
+  * [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+  * [PyCharm](https://www.jetbrains.com/pycharm/)
   * [Docker Compose](https://docs.docker.com/compose/install/)
+  * Instead of PyCharm, this will also work with Docker Engine on Linux
+    and running shell commands/scripts
 * Development
   * Clone the repo: `git clone git@github.com:roryl23/RESTfulAPI.git`
-  * Set up a virtualenv however you like and activate it in PyCharm or otherwise
+  * Set up a virtualenv however you like
     * [pyenv](https://github.com/pyenv/pyenv?tab=readme-ov-file#installation): 
       `pyenv install 3.11.9 && pyenv virtualenv 3.11.9 restfulapi && pyenv activate restfulapi && pip install -r requirements.txt`
+  * Open PyCharm to the repo directory, or change directory in the shell
+  * Activate your virtualenv
   * Run the tests
     * In PyCharm, select the pytest run configuration:
 
-      ![pytest](./docs/pytest.png)
+      ![PyCharm](./docs/pytest.png)
 
     * From the shell, run `pytest`
   * Run the application
     * In PyCharm, select the restfulapi run configuration: 
 
-      ![restfulapi](./docs/restfulapi.png)
+      ![PyCharm](./docs/restfulapi.png)
+    * From the shell, run `docker compose --file deployment/docker-compose.yaml up`
     * Application is up:
       * [API Documentation](http://localhost:8080/docs#/)
       * [Prometheus](http://localhost:9090/)
@@ -42,9 +44,9 @@ An API implementation with FastAPI.
 
 * Publicly available at:
   * [API Documentation](http://roryl23.ddns.net/docs)
-  * [Prometheus](http://roryl23.ddns.net:9090)
+  * [Prometheus](http://roryl23.ddns.net:9090/graph?g0.expr=http_request_duration_milliseconds_bucket&g0.tab=0&g0.display_mode=lines&g0.show_exemplars=0&g0.range_input=5m)
 * To make the Prometheus metrics more interesting, run the stress test:
       
-  ![stress](./docs/stress.png)
-  * From the shell: `python scripts/stress.py`
+  ![PyCharm](./docs/stress.png)
+  * From the shell, run `python scripts/stress.py --host roryl23.ddns.net`
   
