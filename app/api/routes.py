@@ -1,5 +1,4 @@
 from fastapi import APIRouter, status, Response
-from starlette.responses import JSONResponse
 
 from app.models import User, CreateUserRequest, CreatePostRequest, Post
 from app import mongo
@@ -129,11 +128,17 @@ async def create_post(request: CreatePostRequest) -> Response:
 @router.get("/posts/{post_id}")
 async def get_post_by_id(post_id: str) -> Response:
     result = mongo.get_post_by_id(post_id)
-    return Response(
-        content=result.model_dump_json(),
-        status_code=status.HTTP_200_OK,
-        media_type="application/json",
-    )
+    if result:
+        return Response(
+            content=result.model_dump_json(),
+            status_code=status.HTTP_200_OK,
+            media_type="application/json",
+        )
+    else:
+        return Response(
+            status_code=status.HTTP_404_NOT_FOUND,
+            media_type="application/json",
+        )
 
 
 @router.put("/posts/{post_id}")
