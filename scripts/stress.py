@@ -75,6 +75,6 @@ if __name__ == '__main__':
             print(f"failed to update records atomically")
         else:
             print(f"all records updated atomically")
-        print(f"updated record {user_id} {len(results)} times in {duration} seconds at {len(results) / duration} records/s")
+        print(f"updated record {user_id} {len(results)} times in {duration} seconds at ~{int(len(results) / duration)} records/s")
     else:
         print("failed to create user")
