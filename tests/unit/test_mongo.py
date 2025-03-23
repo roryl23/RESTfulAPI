@@ -1,7 +1,58 @@
 from unittest.mock import MagicMock
 
-from app.mongo import create_record, delete_record, get_users, get_user_by_id, update_user
+from app.mongo import create_record, update_record, delete_record, get_users, get_user_by_id
 from tests.fixtures import test_user_id, test_user, test_user_mongo, mock_db
+
+
+def test_create_record_returns_result(mock_db, test_user, test_user_mongo):
+    """
+    test that create_record returns a user after creation
+    """
+    mock_db.insert_one.return_value = test_user_mongo()
+    assert test_user_mongo() == create_record(
+        'users',
+        {
+            'name': test_user.name,
+            'email': test_user.email,
+        }
+    )
+
+
+def test_update_record_returns_result(mock_db, test_user, test_user_mongo):
+    """
+    test that update_record returns a user after update
+    """
+    mock_db.find_one.return_value = test_user_mongo()
+
+    test_user_updated = test_user
+    test_user_updated.name = 'updated'
+    test_user_updated.email = 'updated@roryl23.ddns.net'
+
+    test_user_mongo_updated = test_user_mongo()
+    test_user_mongo_updated['name'] = 'updated'
+    test_user_mongo_updated['email'] = 'updated@roryl23.ddns.net'
+    test_user_mongo_updated['version'] = 2
+    mock_db.find_one_and_update.return_value = test_user_mongo_updated
+
+    assert test_user_mongo_updated == update_record(
+        'users',
+        {
+            '_id': test_user.user_id,
+            'name': test_user.name,
+            'email': test_user.email,
+        }
+    )
+
+
+def test_delete_record_returns_true(mock_db, test_user, test_user_mongo):
+    """
+    test that delete_record returns True after deletion
+    """
+    mock_db.delete_one.return_value = MagicMock(
+        deleted_count=1,
+        acknowledged=True,
+    )
+    assert True == delete_record('user', test_user.user_id)
 
 
 def test_get_users_returns_empty_list(mock_db):
@@ -22,20 +73,6 @@ def test_get_users_returns_populated_list(mock_db, test_user, test_user_mongo):
     assert expected == get_users()
 
 
-def test_create_record_returns_result(mock_db, test_user, test_user_mongo):
-    """
-    test that create_user returns a user after creation
-    """
-    mock_db.insert_one.return_value = test_user_mongo()
-    assert test_user_mongo() == create_record(
-        'users',
-        {
-            'name': test_user.name,
-            'email': test_user.email,
-        }
-    )
-
-
 def test_get_user_by_id_returns_false(mock_db):
     """
     test that get_user_by_id returns None when no user is found
@@ -51,33 +88,3 @@ def test_get_user_by_id_returns_user(mock_db, test_user, test_user_mongo):
     expected = test_user
     mock_db.find_one.return_value = test_user_mongo()
     assert expected == get_user_by_id(test_user_id)
-
-
-def test_update_user_returns_user(mock_db, test_user, test_user_mongo):
-    """
-    test that update_user_by_id returns a user after update
-    """
-    mock_db.find_one.return_value = test_user_mongo()
-
-    test_user_updated = test_user
-    test_user_updated.name = 'updated'
-    test_user_updated.email = 'updated@roryl23.ddns.net'
-
-    test_user_mongo_updated = test_user_mongo()
-    test_user_mongo_updated['name'] = 'updated'
-    test_user_mongo_updated['email'] = 'updated@roryl23.ddns.net'
-    test_user_mongo_updated['version'] = 2
-    mock_db.find_one_and_update.return_value = test_user_mongo_updated
-
-    assert test_user_updated == update_user(test_user_updated)
-
-
-def test_delete_user_returns_true(mock_db, test_user, test_user_mongo):
-    """
-    test that delete_user returns True after deletion
-    """
-    mock_db.delete_one.return_value = MagicMock(
-        deleted_count=1,
-        acknowledged=True,
-    )
-    assert True == delete_record('user', test_user.user_id)

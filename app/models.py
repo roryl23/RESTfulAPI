@@ -17,3 +17,9 @@ class Post(BaseModel):
     title: str
     content: str
     user_id: str
+
+
+class CreatePostRequest(BaseModel):
+    title: str
+    content: str
+    user_id: str

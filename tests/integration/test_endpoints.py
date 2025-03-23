@@ -32,7 +32,7 @@ def test_create_user_success(mock_db, test_user_mongo, test_user_json):
     mock_db.insert_one.return_value = test_user_mongo
     mock_db.find_one.return_value = test_user_mongo()
     response = client.post('/users', json=test_user_json)
-    assert response.status_code == 200
+    assert response.status_code == 201
     assert response.json() == test_user_json
 
 

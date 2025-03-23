@@ -1,10 +1,11 @@
+from typing import Mapping
 from bson import ObjectId
 from pymongo import MongoClient
 from pymongo.errors import OperationFailure
 from pymongo.results import InsertOneResult
 
 from app.config import settings
-from app.models import User
+from app.models import User, Post
 
 client = MongoClient(settings.MONGODB_URI)
 db = client[settings.MONGODB_DB]
@@ -19,6 +20,33 @@ def create_record(collection: str, record: dict) -> InsertOneResult | bool:
         else:
             print(f"failed to create user: {result}")
             return result
+    except OperationFailure as e:
+        print(f"error: {e}")
+        return False
+
+
+def update_record(collection: str, record: dict) -> Mapping | bool:
+    """
+    Update a record in the database atomically.
+    """
+    try:
+        _id = ObjectId(record['_id'])
+        current = db[collection].find_one({'_id': _id})
+        if not current:
+            return False
+
+        updates = {k: v for k, v in record.items() if k != '_id'}
+        updates['version'] = current['version'] + 1
+        result = db[collection].find_one_and_update(
+            {'_id': _id, 'version': current['version']},
+            {'$set': updates},
+            return_document=True
+        )
+        if result:
+            return result
+        else:
+            print(f"update failed due to version mismatch: {result}")
+            return False
     except OperationFailure as e:
         print(f"error: {e}")
         return False
@@ -64,34 +92,30 @@ def get_user_by_id(user_id: str) -> User | bool:
         return False
 
 
-def update_user(user: User) -> User | bool:
-    """
-    Update a user in the database atomically.
-    """
-    try:
-        current = db['users'].find_one({'_id': ObjectId(user.user_id)})
-        if not current:
-            return False
+def get_posts() -> list[Post]:
+    results = db['posts'].find()
+    if results:
+        posts = []
+        for record in results:
+            posts.append(Post(
+                post_id=str(record['_id']),
+                title=record['title'],
+                content=record['content'],
+                user_id=record['user_id'],
+            ))
+        return posts
+    else:
+        return []
 
-        result = db['users'].find_one_and_update(
-            {'_id': ObjectId(user.user_id), 'version': current['version']},
-            { '$set': {
-                'name': user.name,
-                'email': user.email,
-                'version': current['version'] + 1,
-            }},
-            return_document=True
+
+def get_post_by_id(post_id: str) -> Post | bool:
+    result = db['posts'].find_one({'_id': ObjectId(post_id)})
+    if result:
+        return Post(
+            post_id=str(result['_id']),
+            title=result['title'],
+            content=result['content'],
+            user_id=result['user_id'],
         )
-
-        if result:
-            return User(
-                user_id=str(result['_id']),
-                name=result['name'],
-                email=result['email'],
-            )
-        else:
-            print(f"update failed due to version mismatch: {result}")
-            return False
-    except OperationFailure as e:
-        print(f"error: {e}")
+    else:
         return False
