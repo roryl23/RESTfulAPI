@@ -1,4 +1,5 @@
 from fastapi import APIRouter, status, Response
+from opentelemetry import trace
 
 from app.models import User, UserRequest, PostRequest, Post
 from app import mongo
@@ -8,11 +9,15 @@ router = APIRouter()
 
 @router.get("/users")
 async def get_users() -> list[User]:
+    span = trace.get_current_span()
+    span.set_attribute("resource", "mongo")
     return mongo.get_users()
 
 
 @router.post("/users")
 async def create_user(request: UserRequest) -> Response:
+    span = trace.get_current_span()
+    span.set_attribute("resource", "mongo")
     result = mongo.create_record(
         'users',
         {
@@ -35,6 +40,8 @@ async def create_user(request: UserRequest) -> Response:
 
 @router.get("/users/{user_id}")
 async def get_user_by_id(user_id: str) -> Response:
+    span = trace.get_current_span()
+    span.set_attribute("resource", "mongo")
     result = mongo.get_user_by_id(user_id)
     if result:
         return Response(
@@ -48,6 +55,8 @@ async def get_user_by_id(user_id: str) -> Response:
 
 @router.put("/users/{user_id}")
 async def update_user(user_id: str, request: UserRequest) -> Response:
+    span = trace.get_current_span()
+    span.set_attribute("resource", "mongo")
     result = mongo.update_record(
         'users',
         {
@@ -74,6 +83,8 @@ async def update_user(user_id: str, request: UserRequest) -> Response:
 
 @router.delete("/users/{user_id}")
 async def delete_user(user_id: str) -> Response:
+    span = trace.get_current_span()
+    span.set_attribute("resource", "mongo")
     result = mongo.delete_record('users', user_id)
     if result:
         return Response(status_code=status.HTTP_204_NO_CONTENT)
@@ -83,11 +94,15 @@ async def delete_user(user_id: str) -> Response:
 
 @router.get("/posts")
 async def get_posts() -> list[Post]:
+    span = trace.get_current_span()
+    span.set_attribute("resource", "mongo")
     return mongo.get_posts()
 
 
 @router.post("/posts")
 async def create_post(request: PostRequest) -> Response:
+    span = trace.get_current_span()
+    span.set_attribute("resource", "mongo")
     user = mongo.get_user_by_id(request.user_id)
     if user:
         result = mongo.create_record(
@@ -113,6 +128,8 @@ async def create_post(request: PostRequest) -> Response:
 
 @router.get("/posts/{post_id}")
 async def get_post_by_id(post_id: str) -> Response:
+    span = trace.get_current_span()
+    span.set_attribute("resource", "mongo")
     result = mongo.get_post_by_id(post_id)
     if result:
         return Response(
@@ -126,6 +143,8 @@ async def get_post_by_id(post_id: str) -> Response:
 
 @router.put("/posts/{post_id}")
 async def update_post(post_id: str, request: PostRequest) -> Response:
+    span = trace.get_current_span()
+    span.set_attribute("resource", "mongo")
     result = mongo.update_record(
         'posts',
         {
@@ -151,6 +170,8 @@ async def update_post(post_id: str, request: PostRequest) -> Response:
 
 @router.delete("/posts/{post_id}")
 async def delete_post(post_id: str) -> Response:
+    span = trace.get_current_span()
+    span.set_attribute("resource", "mongo")
     result = mongo.delete_record('posts', post_id)
     if result:
         return Response(status_code=status.HTTP_204_NO_CONTENT)
